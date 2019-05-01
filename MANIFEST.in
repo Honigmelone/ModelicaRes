@@ -8,7 +8,6 @@ include doc/*.md
 include doc/*.pws
 include doc/*.py
 include doc/*.rst
-include doc/*.txt
 include doc/_static/*
 include doc/_templates/*
 include doc/extra/*
@@ -19,8 +18,8 @@ include examples/*.mat
 include examples/*.md
 include examples/*.py
 include examples/dsin.txt
-include examples/load-csv*
 include examples/matplotlibrc
+include examples/load-csv*
 include examples/ChuaCircuit/*.md
 include examples/ChuaCircuit/*.py
 include examples/ChuaCircuit/*/*.mat
@@ -30,11 +29,5 @@ include examples/PID/*/*.mat
 include examples/PID/*/dsin.txt
 
 # Test scripts and data files
-include tests/*.mat
-include tests/*.md
-include tests/*.py
-include tests/*.txt
-
-# For version labeling
-include versioneer.py
-include modelicares/_version.py
+include tests/*
+exclude tests/*.pdf

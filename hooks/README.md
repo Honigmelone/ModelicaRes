@@ -1,16 +1,17 @@
-This folder contains scripts that help with the development and release of
+This folder contains scripts that help with the development and distribution of
 ModelicaRes.
 
 The [pre-commit script](pre-commit) prevents commits if there are errors in the
 Python source or there are filenames with non-ASCII characters.  It also adds
-an "UNRELEASED" markdown file in the base folder if there is no version marked
-in [modelicares/__init__.py](../modelicares/__init__.py).
+an "UNRELEASED COPY" markdown file in the base folder if there is no version
+marked in [modelicares/__init__.py](../modelicares/__init__.py).
 
 The [post-checkout script](post-checkout) removes byte-compiled Python files
 (*.pyc) when switching branches.  Since the source may change when upon
 checkout, the *.pyc files should be recompiled to prevent confusion.
 
-Other scripts ([code.sh](code.sh), [doc.sh](doc.sh), etc.) are linked to [git] via aliases.
+Other scripts ([code.sh](code.sh), [doc.sh](doc.sh), and
+[diff-matplotlibrc.sh](diff-matplotlibrc.sh)) are linked to [git] via aliases.
 
 #### Installation
 
@@ -20,7 +21,6 @@ Copy [pre-commit](pre-commit) and [post-checkout](post-checkout) to
 Add to *.git/config*:
 
     [alias]
-        cloc = !bash `git rev-parse --show-toplevel`/hooks/cloc.sh
 	    diff-matplotlibrc = !bash `git rev-parse --show-toplevel`/hooks/diff-matplotlibrc.sh
         pylint = !bash `git rev-parse --show-toplevel`/hooks/pylint.sh
 	    doc = !bash `git rev-parse --show-toplevel`/hooks/doc.sh
@@ -59,6 +59,11 @@ To release/publish the documentation to the [GitHub webpage]\:
 
     git doc release
 
+##### Integrated:
+
+To run `git code build` and then `git doc build`, use `git build`.
+To run `git code release` and `git doc release`, use `git release`.
+
 ##### Other:
 
 To compare the [matplotlibrc](../matplotlibrc) file to the user's configuration:
@@ -69,16 +74,12 @@ To run [pylint](http://www.pylint.org/) on all of the source files:
 
     git pylint
 
-To count the number of lines of code:
-
-    git cloc
-
 #### Development workflow
 
 All releases and updates are on the `master` branch.  During the build process,
 (`git code build`), releases are tagged  as "v*major*.*minor*.*micro*", where
 *major*, *minor*, and *micro* are the integer parts of the version number.  The
-unreleased updates have an "UNRELEASED.md" file in the base folder with the
+unreleased updates have an "UNRELEASED COPY.md" file in the base folder with the
 commit date/time and the author.
 
 The version number is recorded in

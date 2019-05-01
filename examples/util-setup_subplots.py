@@ -1,8 +1,5 @@
 #!/usr/bin/python
-"""Example of util.setup_subplots()
-"""
-
-# pylint: disable=I0011, C0103
+# Example of util.setup_subplots()
 
 from modelicares import util
 

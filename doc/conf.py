@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""ModelicaRes documentation build configuration file, created by
+""" ModelicaRes documentation build configuration file, created by
 sphinx-quickstart on Mon Oct 15 09:06:21 2012.
 
 This file is execfile()d with the current directory set to its containing dir.
@@ -16,17 +16,15 @@ show the default.
 # pylint: disable=I0011, W0141, W0142
 
 # Other:
-# pylint: disable=I0011, C0103, W0621, W0622
-
+# pylint: disable=C0103
 
 def skip(app, what, name, obj, skip, options):
     """Include otherwise hidden methods.
     """
-    # pylint: disable=I0011, W0613
+    # pylint: disable=W0613
     if name in ["__call__", "__contains__", "__getitem__", "__len__"]:
         return False
     return skip
-
 
 def setup(app):
     """Add roles and javascripts.
@@ -35,31 +33,17 @@ def setup(app):
     app.add_javascript('copybutton.js')
     app.add_javascript('analytics.js')
 
-# -- General configuration -----------------------------------------------
+# -- General configuration -----------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.doctest',
               'sphinx.ext.pngmath',
-              'sphinx.ext.intersphinx',
-              'sphinx.ext.inheritance_diagram',
-              'sphinx.ext.graphviz',
               'matplotlib.sphinxext.plot_directive'
              ]
 # Note: sphinx.ext.autosummary produces a table, but I'd rather have a bulleted
 # list.
-
-# Mappings to other packages
-# TODO: Fix numpy link.
-intersphinx_mapping = {
-    'control': ('http://python-control.sourceforge.net/manual/', None),
-    'matplotlib': ('http://matplotlib.org/1.3.1', None),
-    'natu': ('http://kdavies4.github.io/natu/', None),
-    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
-    'pandas': ('http://pandas.pydata.org/pandas-docs/stable/', None),
-    'python': ('https://docs.python.org/', None),
-}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -72,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'ModelicaRes'
-copyright = ('2012-2014, Kevin Davies, Hawaii Natural Energy Institute and '
+copyright = ('2012-2014, Kevin Davies, Hawaii Natural Energy Institute, and '
              'Georgia Tech Research Corporation')
 
 # The version info for the project you're documenting, acts as replacement for
@@ -93,7 +77,7 @@ exclude_patterns = []
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
-# -- Options for HTML output ---------------------------------------------
+# -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for a
 # list of builtin themes.
@@ -108,7 +92,7 @@ html_theme_options = {
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = "Plot and analyze Modelica results in Python"
+html_title = "Analyze Modelica results in Python"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 version_str = " v%s" % version if version else ''

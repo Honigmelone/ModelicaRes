@@ -4,66 +4,72 @@
 See README.md for instructions.
 """
 
-# pylint: disable=C0103
+# pylint: disable=E0611, F0401
 
 import re
-import versioneer
 
 from glob import glob
-from os import path
-from setuptools import setup
 
-here = path.abspath(path.dirname(__file__))
+try:
+    from setuptools import setup
+except ImportError:
+    try:
+        from setuptools.core import setup
+    except ImportError:
+        try:
+            from distutils.core import setup
+        except ImportError:
+            from numpy.distutils.core import setup
 
-versioneer.VCS = 'git'
-versioneer.versionfile_source = 'modelicares/_version.py'
-versioneer.versionfile_build = 'modelicares/_version.py'
-versioneer.tag_prefix = 'v' # Tags are like 1.2.0
-versioneer.parentdir_prefix = 'ModelicaRes-'
-version = versioneer.get_version()
+def get_version(fname):
+    """Return the version number of the module in file *fname*.
+    """
+    with open(fname) as module:
+        try:
+            return re.search('__version__ *= *["'"'"'](.*)["'"'"']',
+                             module.read()).group(1)
+        except AttributeError:
+            return
 
-with open(path.join(here, 'doc/long-description.txt')) as f:
-    long_description = f.read()
+VERSION = get_version('modelicares/__init__.py')
 
 setup(name='ModelicaRes',
-      version=version,
-      cmdclass=versioneer.get_cmdclass(),
-      description="Set up, plot, and analyze Modelica simulations in Python",
-      long_description=long_description,
+      version=VERSION if VERSION else '0-unreleased_copy',
+      description=('Utilities to set up and analyze Modelica simulation '
+                   'experiments'),
+      long_description=open('README.txt').read(),
       author='Kevin Davies',
       author_email='kdavies4@gmail.com',
-      license='BSD-compatible (see LICENSE.txt)',
-      keywords=('results dymola openmodelica data mat file analysis script '
-                'sort filter browse export diagram simulation linearization '
-                'experiment matplotlib pandas'),
       url='http://kdavies4.github.io/ModelicaRes/',
       download_url=('https://github.com/kdavies4/ModelicaRes/archive/v%s.zip'
-                    % version),
+                    % VERSION if VERSION else ''),
+      packages=['modelicares', 'modelicares.exps', 'modelicares._io'],
+      scripts=glob('bin/*'),
       classifiers=[
           'Development Status :: 4 - Beta',
-          'Intended Audience :: Science/Research',
-          'Topic :: Scientific/Engineering',
-          'Topic :: Scientific/Engineering :: Visualization',
-          'Topic :: Utilities',
+          'Operating System :: POSIX :: Linux',
+          'Operating System :: Microsoft :: Windows',
+          'Environment :: Console',
           'License :: OSI Approved :: BSD License',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3.2',
           'Programming Language :: Python :: 3.3',
           'Programming Language :: Python :: 3.4',
-          'Operating System :: POSIX :: Linux',
-          'Operating System :: Microsoft :: Windows',
+          'Intended Audience :: Science/Research',
+          'Topic :: Scientific/Engineering',
+          'Topic :: Utilities',
       ],
+      license='BSD-compatible (see LICENSE.txt)',
+      keywords=['Modelica', 'plot', 'results', 'simulation', 'experiment',
+                'Dymola', 'matplotlib', 'pandas'],
       provides=['modelicares'],
-      packages=['modelicares', 'modelicares.exps', 'modelicares._io'],
-      package_data={'modelicares': ['display.ini']},
-      scripts=glob('bin/*'),
-      install_requires=['numpy', 'matplotlib>=1.3.1', 'natu', 'pandas',
-                        'control', 'six'],
-      requires=['numpy', 'scipy (>=0.10.0)', 'matplotlib (>=1.3.1)', 'natu',
-                'pandas', 'control', 'six'],
+      install_requires=['numpy', 'matplotlib>=1.3.1', 'pandas', 'control',
+                        'six'],
+      requires=['numpy', 'scipy (>=0.10.0)', 'matplotlib (>=1.3.1)', 'pandas',
+                'control', 'six'],
       platforms='any',
-      zip_safe=False, # because display.ini must be accessed
-      test_suite = 'tests.test_suite',
+      zip_safe=True,
      )
-# ModelicaRes may run with scipy as early as 0.7.0.  However, the control
-# package needs scipy >= 0.10.0 but does not stipulate the version.
+      # ModelicaRes may run with scipy as early as 0.7.0.  However, the control
+      # package seems to need scipy >= 0.10.0 but does not stipulate the
+      # version.

@@ -7,7 +7,7 @@
 # pylint: disable=I0011, W0141, W0142
 
 # Other:
-# pylint: disable=I0011, C0103, E0611, F0401, W0621
+# pylint: disable=C0103, E0611, F0401
 
 import os
 import shutil
@@ -16,10 +16,9 @@ import sys
 from sh import git, python, sphinx_build, ErrorReturnCode_1, ErrorReturnCode_128
 from glob import glob
 from collections import namedtuple
-from natu import util
+from modelicares import util
 
 BUILD_DIR = 'build/html'
-
 
 def html():
     """Build/make the HTML documentation.
@@ -36,12 +35,12 @@ def html():
         # This is simpler but doesn't always return the latest tag:
         # lastversion = git.describe('--tag', abbrev=0).stdout.rstrip()
     except ErrorReturnCode_128:
-        pass  # No tags recorded; leave download link as is
+        pass # No tags recorded; leave download link as is
     else:
         date = git.log('-1', lastversion,
                        date='short', format='%ad').stdout[8:18]
-        rpls = [(r'(ModelicaRes)-.*(\.tar)', r'\1-%s\2' % lastversion[1:]),
-                (r'(Latest version<br>\().*(\)</a>)',
+        rpls = [(r'(ModelicaRes)-.+(\.tar)', r'\1-%s\2' % lastversion[1:]),
+                (r'(Latest version<br>\().+(\)</a>)',
                  r'\1%s, %s\2' % (lastversion, date)),
                ]
         util.replace('_templates/download.html', rpls)
@@ -55,12 +54,10 @@ def html():
     if util.yes("Do you want to spellcheck the HTML documentation (y/n)?"):
         spellcheck()
 
-
 def clean():
     """Clean/remove the built documentation.
     """
     shutil.rmtree('build', ignore_errors=True)
-
 
 def make_dirs():
     """Create the directories required to build the documentation.
@@ -81,11 +78,10 @@ def make_dirs():
             raise IOError("Could not find the examples folder.")
         try:
             os.symlink(example_dir, 'examples')
-        except AttributeError:  # Symlinks aren't available in Windows.
+        except AttributeError: # Symlinks aren't available in Windows.
             raise AttributeError('Create a doc/examples shortcut that points '
                                  'to the examples folder in the base '
                                  'directory.')
-
 
 def release():
     """Release/publish the documentation to the webpage.
@@ -97,7 +93,7 @@ def release():
     # Check out the gh-pages branch.
     try:
         git.checkout('gh-pages')
-    except ErrorReturnCode_128:  # Create the branch if necessary.
+    except ErrorReturnCode_128: # Create the branch if necessary.
         git.checkout('-b', 'gh-pages')
 
     # Remove the existing files in the base folder.
@@ -153,9 +149,9 @@ def release():
     try:
         git.commit('-a', m="Rebuilt documentation")
     except ErrorReturnCode_1:
-        pass  # No changes to commit
+        pass # No changes to commit
 
-    # If desired, rebase and push the changes to origin.
+    # If desired, push the changes to origin.
     print("The gh-pages branch has been updated and is currently checked out.")
     if util.yes("Do you want to rebase it and push the changes to "
                 "origin (y/n)?"):
@@ -167,17 +163,16 @@ def release():
     try:
         git.stash.pop()
     except ErrorReturnCode_1:
-        pass  # No stash was necessary in the first place.
+        pass # No stash was necessary in the first place.
     print("Now back on " + branch)
-
 
 def spellcheck():
     """Spellcheck the HTML docs.
     """
     # Options
-    wordfile = os.path.abspath('modelicares.pws')  # Name of custom word file
-    extrafile = os.path.abspath('modelica.pws')  # Name of extra word file
-    html_files = glob('build/html/*.html')  # Names of the HTML files
+    wordfile = os.path.abspath('.modelicares.pws') # Name of custom word file
+    extrafile = os.path.abspath('.modelica.pws') # Name of extra word file
+    html_files = glob('build/html/*.html') # Names of the HTML files
 
     print("If there are misspellings, fix them in the Python or ReST "
           "source---not just in the HTML files.")
@@ -200,10 +195,8 @@ def spellcheck():
     # Check the spelling.
     for page in html_files:
         if os.system('aspell --dont-backup --personal={1} --extra-dicts={0} '
-                     '-c "{2}"'.format(wordfile, extrafile, page)):
-            raise SystemError("Error on file %s.  Be sure that aspell "
-                              "(http://aspell.net/) is installed." % page)
-
+                     '-c {2}'.format(wordfile, extrafile, page)):
+            raise SystemError("aspell (http://aspell.net/) must be installed.")
 
 def static():
     """Create static images for the HTML documentation and the base README.md.
@@ -214,11 +207,11 @@ def static():
     join = os.path.join
 
     # Options
-    indir = "../examples"  # Directory with the mat files.
-    outdir = "_static"  # Directory where the images should be generated
-    dpi = 90  # DPI for the HTML index images
-    dpi_small = 30  # DPI for the README images
-    kwargs = dict(bbox_inches='tight', format='png')  # Other savefig() options
+    indir = "../examples" # Directory with the mat files.
+    outdir = "_static" # Directory where the images should be generated
+    dpi = 90 # DPI for the HTML index images
+    dpi_small = 30 # DPI for the README images
+    kwargs = dict(bbox_inches='tight', format='png') # Other savefig() options
 
     # ThreeTanks
     # ----------
@@ -280,7 +273,6 @@ ACTIONS = {'clean'   : Action(clean, "Clean/remove the built documentation."),
            'release' : Action(release, ("Release/publish the documentation to "
                                         "the webpage.")),
           }
-
 
 def funcs_str():
     """Return a string listing the valid functions and their descriptions.
