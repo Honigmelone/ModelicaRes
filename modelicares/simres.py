@@ -1402,11 +1402,11 @@ class SimRes(Res):
                                   unit=flow_unit, **kwargs).finish())
         return sankeys
 
-    def to_pandas(self, names=None, aliases={}):
+    def to_pandas(self, names=None, aliases={}, with_unit=True):
         """Return a `pandas DataFrame`_ with values from selected variables.
 
-        The index is time.  The column headings indicate the variable names as
-        well as the units.
+        The index is time.  The column headings indicate the variable names and
+        units.
 
         The data frame has methods for further manipulation and exporting (e.g.,
         :meth:`~pandas.DataFrame.to_clipboard`,
@@ -1426,6 +1426,12 @@ class SimRes(Res):
              and the values are the names as they should be included in the
              column headings.  Any variables not in this list will not be
              aliased.  Any unmatched aliases will not be used.
+
+        - *with_unit*: Boolean to determine format of keys
+
+            If set to True, the unit will be added to the key. As not all modelica-
+            result files export the unit information, using with_unit=True can lead
+            to errors.
 
         **Examples:**
 
@@ -1455,16 +1461,27 @@ class SimRes(Res):
         1.600000           7.900317          2.962539          3.137144
         ...
         [502 rows x 3 columns]
+
+        >>> sim = SimRes('examples/ChuaCircuit.mat')
+        >>> voltages = sim.names('^[^.]*.v$', re=True)
+        >>> sim.to_pandas(voltages, with_unit=False) # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+                  C1.v      C2.v      G.v       L.v       Nr.v      Ro.v
+        Time
+        0         4.000000  0.000000 -4.000000  0.000000  4.000000  0.000000
+        5         3.882738  0.109426 -3.773312  0.109235  3.882738  0.000191
+        ...
+        [514 rows x 6 columns]
+
         """
-        # Simple function to label a variable with its unit:
-        label = lambda name, unit: name + ' / ' + unit
+        # Note: The frst doctest above requires pandas >= 0.14.0.  Otherwise,
+        # more decimal places are shown in the Time column.
 
         # Create the list of variable names.
-        if names is None:
-            names = self.names()
-        else:
-            names = set(util.flatten_list(names))
+        if names:
+            names = set(flatten_list(names))
             names.add('Time')
+        else:
+            names = self.names
 
         # Create a dictionary of names and values.
         times = self['Time'].values()
@@ -1473,9 +1490,13 @@ class SimRes(Res):
 
             # Get the values.
             if np.array_equal(self[name].times(), times):
-                values = self[name].values() # Save computation.
+                values = self[name].values()  # Save computation.
+            # Check if all values are constant to save resampling time
+            elif np.count_nonzero(self[name].values() - np.max(self[name].values())) == 0:
+                # Passing a scalar converts automatically to an array.
+                values = np.max(self[name].values())
             else:
-                values = self[name].values(t=times) # Resample.
+                values = self[name].values(t=times)  # Resample.
 
             unit = self[name].unit
 
@@ -1485,10 +1506,45 @@ class SimRes(Res):
             except KeyError:
                 pass
 
-            data.update({label(name, unit): values})
+            if unit and with_unit:
+                data.update({name + ' / ' + unit: values})
+            else:
+                data.update({name: values})
 
         # Create the pandas data frame.
-        return DataFrame(data).set_index('Time / s')
+        if with_unit:
+            return DataFrame(data).set_index('Time / s')
+        else:
+            return DataFrame(data).set_index('Time')
+
+    def get_trajectories(self):
+        """Function to filter time-variant parameters.
+
+        All variables which are trajectories are extracted from the simulation result.
+        Either the length of the variable is greater than two, or the values are not
+        equal. In both cases, the variable is considered to be a trajectory.
+
+        **Examples:**
+        >>> from modelicares import SimRes
+        >>> sim = SimRes('examples/ChuaCircuit.mat')
+        >>> sim.get_trajectories()
+        ['C1.der(v)', 'C1.i', 'C1.n.i', 'C1.p.i', 'C1.p.v', 'C1.v', 'C2.der(v)',
+        'C2.i', 'C2.n.i', 'C2.p.i', 'C2.p.v', 'C2.v', 'G.LossPower', 'G.i',
+        'G.n.i', 'G.n.v', 'G.p.i', 'G.p.v', 'G.v', 'Gnd.p.i', 'L.der(i)', 'L.i',
+        'L.n.i', 'L.n.v', 'L.p.i', 'L.p.v', 'L.v', 'Nr.i', 'Nr.n.i', 'Nr.p.i',
+        'Nr.p.v', 'Nr.v', 'Ro.LossPower', 'Ro.i', 'Ro.n.i', 'Ro.p.i', 'Ro.p.v', 'Ro.v', 'Time']
+        """
+        trajectory_names = []
+        for name in self.names:
+            values = self[name].values()
+            # If the value array is greater then two, it is always a trajectory
+            if len(values) > 2:
+                trajectory_names.append(name)
+            # Special Case: Only two time-steps are simulated.
+            # In that case, if the last value does not equal the first value, it is also a trajectory
+            elif len(values) == 2 and values[0] != values[-1]:
+                trajectory_names.append(name)
+        return trajectory_names
 
     def __call__(self, names):
         """Access a list of variables by their names.
