@@ -1473,15 +1473,15 @@ class SimRes(Res):
         [514 rows x 6 columns]
 
         """
-        # Note: The frst doctest above requires pandas >= 0.14.0.  Otherwise,
+        # Note: The first doctest above requires pandas >= 0.14.0.  Otherwise,
         # more decimal places are shown in the Time column.
 
         # Create the list of variable names.
         if names:
-            names = set(flatten_list(names))
+            names = set(util.flatten_list(names))
             names.add('Time')
         else:
-            names = self.names
+            names = self.names()
 
         # Create a dictionary of names and values.
         times = self['Time'].values()
@@ -1527,15 +1527,12 @@ class SimRes(Res):
         **Examples:**
         >>> from modelicares import SimRes
         >>> sim = SimRes('examples/ChuaCircuit.mat')
-        >>> sim.get_trajectories()
-        ['C1.der(v)', 'C1.i', 'C1.n.i', 'C1.p.i', 'C1.p.v', 'C1.v', 'C2.der(v)',
-        'C2.i', 'C2.n.i', 'C2.p.i', 'C2.p.v', 'C2.v', 'G.LossPower', 'G.i',
-        'G.n.i', 'G.n.v', 'G.p.i', 'G.p.v', 'G.v', 'Gnd.p.i', 'L.der(i)', 'L.i',
-        'L.n.i', 'L.n.v', 'L.p.i', 'L.p.v', 'L.v', 'Nr.i', 'Nr.n.i', 'Nr.p.i',
-        'Nr.p.v', 'Nr.v', 'Ro.LossPower', 'Ro.i', 'Ro.n.i', 'Ro.p.i', 'Ro.p.v', 'Ro.v', 'Time']
+        >>> trajectory_names = sim.get_trajectories()
+        >>> len(trajectory_names)
+        39
         """
         trajectory_names = []
-        for name in self.names:
+        for name in self.names():
             values = self[name].values()
             # If the value array is greater then two, it is always a trajectory
             if len(values) > 2:

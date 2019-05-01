@@ -16,3 +16,4 @@ matplotlibrc
 
 # Backup files
 .ipynb_checkpoints
+.idea
