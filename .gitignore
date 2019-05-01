@@ -16,4 +16,7 @@ matplotlibrc
 
 # Backup files
 .ipynb_checkpoints
+
+# PyCharm files
 .idea
+venv

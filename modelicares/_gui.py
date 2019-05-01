@@ -99,12 +99,11 @@ class Browser(wx.Frame):
             """Build the variable tree.
             """
             for key in branches.keys():
-                data = wx.TreeItemData()
                 if isinstance(branches[key], string_types):
-                    data.SetData(branches[key])
+                    data = branches[key]
                     subbranch = self.tree.AppendItem(branch, key, data=data)
                 else:
-                    data.SetData('')
+                    data = ''
                     subbranch = self.tree.AppendItem(branch, key, data=data)
                     _build_tree(branches[key], subbranch) # Recursion
 
@@ -114,6 +113,10 @@ class Browser(wx.Frame):
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         vbox = wx.BoxSizer(wx.VERTICAL)
         panel_left = wx.Panel(self, -1)
+        panel = wx.Panel(self)
+        close_btn = wx.Button(panel, label="Close")
+        close_btn.Bind(wx.EVT_BUTTON, self.on_close)
+        #
         self.panel_right = PreviewPanel(self, -1)
         self.sim = sim
 
@@ -136,7 +139,7 @@ class Browser(wx.Frame):
     def OnDragInit(self, event):
         """Drag the full variable name as text.
         """
-        text = self.tree.GetItemData(event.GetItem()).GetData() + '\n'
+        text = self.tree.GetItemData(event.GetItem()) + '\n'
         tdo = wx.TextDataObject(text)
         tds = wx.DropSource(self.tree)
         tds.SetData(tdo)
@@ -145,5 +148,12 @@ class Browser(wx.Frame):
     def OnSelChanged(self, event):
         """Update the variable's attributes and plot.
         """
-        name = self.tree.GetItemData(event.GetItem()).GetData()
-        self.panel_right.preview(name, self.sim)
+        try:
+            name = self.tree.GetItemData(event.GetItem())
+            self.panel_right.preview(name, self.sim)
+        except RuntimeError:
+            pass
+
+    def on_close(self, event):
+        """"""
+        self.Close()
