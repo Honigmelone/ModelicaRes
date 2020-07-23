@@ -36,8 +36,6 @@ write_script(EXPERIMENTS, working_dir=WORKING_DIR, packages=PACKAGES,
                       "dslin.mat"])
 
 # Ask Dymola to run the script.
-# For Linux:
-os.system('dymola ' + FNAME)
-# TODO: Support Windows.
-# For Windows:
-# os.system(r'C:\Program files\Dymola\bin\Dymola.exe ' + FNAME)
+os.system('dymola ' + FNAME) # For Linux
+# TODO: Add support for Windows.
+# os.system(r'C:\Program files\Dymola\bin\Dymola.exe ' + FNAME) # For Windows

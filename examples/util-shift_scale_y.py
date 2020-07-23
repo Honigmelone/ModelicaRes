@@ -1,8 +1,5 @@
 #!/usr/bin/python
-"""Example of util.shift_scale_y()
-"""
-
-# pylint: disable=I0011, C0103, E1101, R0801
+# Example of util.shift_scale_y()
 
 import numpy as np
 
@@ -14,7 +11,7 @@ x = range(100)
 y = np.cumsum(np.random.random(100) - 0.5)
 y -= y.min()
 y *= 1e-3
-y += 1e3  # Small magnitude and large offset
+y += 1e3 # Small magnitude and large offset
 ylabel = number_label('Velocity', 'mm/s')
 
 # Plot the data.

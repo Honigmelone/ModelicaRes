@@ -30,7 +30,7 @@ PACKAGES = []
 # List or generator of simulations to run
 EXPERIMENTS = gen_experiments(
     models=['Modelica.Electrical.Analog.Examples.ChuaCircuit'],
-    params={'L.L': [15, 21]},  # Can use none for default
+    params={'L.L': [15, 21]}, # Can use none for default
     args=dict(stopTime=[2500]))
 
 # Formats in which to save the figures (e.g., ['pdf', 'eps', 'svg', 'png'])
@@ -45,13 +45,11 @@ if RUN:
                                        packages=PACKAGES, fname=FNAME)
 
     # Ask Dymola to run the script.
-    # For Linux:
-    os.system('dymola ' + FNAME)
-    # TODO: Support Windows.
-    # For Windows:
-    # os.system(r'C:\Program files\Dymola\bin\Dymola.exe ' + FNAME)
+    os.system('dymola ' + FNAME) # For Linux
+    # TODO: Add support for Windows.
+    # os.system(r'C:\Program files\Dymola\bin\Dymola.exe ' + FNAME) # For Windows
 else:
-    MODELS = [experiment.model[experiment.model.rfind('.') + 1:]
+    MODELS = [experiment.model[experiment.model.rfind('.')+1:]
               for experiment in EXPERIMENTS]
     RESULTS_DIR = os.path.split(FNAME)[0]
 

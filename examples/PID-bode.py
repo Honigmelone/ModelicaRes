@@ -1,8 +1,5 @@
 #!/usr/bin/python
-"""Example of LinRes.bode()
-"""
-
-# pylint: disable=I0011, C0103
+# Example of LinRes.bode()
 
 from modelicares import LinRes
 

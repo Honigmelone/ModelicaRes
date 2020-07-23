@@ -1,8 +1,5 @@
 #!/usr/bin/python
-"""Example of LinRes.nyquist()
-"""
-
-# pylint: disable=I0011, C0103, R0801
+# Example of LinRes.nyquist()
 
 from modelicares import LinRes
 

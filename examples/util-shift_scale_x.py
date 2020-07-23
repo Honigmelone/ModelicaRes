@@ -1,8 +1,5 @@
 #!/usr/bin/python
-"""Example of util.shift_scale_x()
-"""
-
-# pylint: disable=I0011, C0103, E1101
+# Example of util.shift_scale_x()
 
 import numpy as np
 
@@ -10,7 +7,7 @@ from modelicares import util
 from modelicares.texunit import number_label
 
 # Generate some random data.
-x = np.linspace(55478, 55486, 100)  # Small range and large offset
+x = np.linspace(55478, 55486, 100) # Small range and large offset
 xlabel = number_label('Time', 's')
 y = np.cumsum(np.random.random(100) - 0.5)
 

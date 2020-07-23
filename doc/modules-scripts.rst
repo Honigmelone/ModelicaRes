@@ -9,9 +9,11 @@ List of ModelicaRes modules and scripts
   results
 - :mod:`modelicares.linres` - classes to load, analyze, and plot linearization
   results
-- :mod:`modelicares.exps` - classes and functions to set up and run simulation
-  experiments
-- :mod:`modelicares.util` - supporting functions and classes
+- :mod:`modelicares.exps` - tools to set up and manage simulation experiments
+- :mod:`modelicares.texunit` - functions to translate Modelica_ *unit* and
+  *displayUnit* strings into LaTeX_-formatted strings
+- :mod:`modelicares.util` - supporting functions and classes.
 
 
 .. _Modelica: http://www.modelica.org/
+.. _LaTeX: http://www.latex-project.org/

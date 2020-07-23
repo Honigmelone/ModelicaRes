@@ -1,8 +1,5 @@
 #!/usr/bin/pythont
-"""Example of LinResList.nyquist()
-"""
-
-# pylint: disable=I0011, C0103, W0301
+# Example of LinResList.nyquist()
 
 from os.path import join
 from modelicares import LinResList, read_params
