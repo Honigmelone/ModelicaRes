@@ -30,7 +30,6 @@ import numpy as np
 
 from control.matlab import ss
 from functools import wraps
-from matplotlib.cbook import iterable
 from scipy.signal import ss2tf
 from six import string_types
 
@@ -350,10 +349,10 @@ class LinRes(Res):
             title = "Bode plot of %s" % self.fbase
 
         # Set up the color(s) and line style(s).
-        if not iterable(colors):
+        if not np.iterable(colors):
             # Use the single color for all plots.
             colors = (colors,)
-        if not iterable(styles) or isinstance(styles[0], int):
+        if not np.iterable(styles) or isinstance(styles[0], int):
             # Use the single line or dashes style for all plots.
             styles = [styles]
         n_colors = len(colors)
@@ -476,7 +475,7 @@ class LinRes(Res):
             title = "Nyquist plot of %s" % self.fbase
 
         # Set up the color(s).
-        if not iterable(colors):
+        if not np.iterable(colors):
             # Use the single color for all plots.
             colors = (colors,)
         n_colors = len(colors)
@@ -857,10 +856,10 @@ class LinResList(ResList):
         labels = self._get_labels(labels)
 
         # Set up the color(s) and line style(s).
-        if not iterable(colors):
+        if not np.iterable(colors):
             # Use the single color for all plots.
             colors = (colors,)
-        if not iterable(styles):
+        if not np.iterable(styles):
             # Use the single line style for all plots.
             styles = [styles]
         elif type(styles[0]) is int:
@@ -985,7 +984,7 @@ class LinResList(ResList):
         labels = self._get_labels(labels)
 
         # Set up the color(s).
-        if not iterable(colors):
+        if not np.iterable(colors):
             # Use the single color for all plots.
             colors = (colors,)
         n_colors = len(colors)

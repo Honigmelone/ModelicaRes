@@ -112,7 +112,6 @@ from itertools import cycle
 from math import floor
 from matplotlib import rcParams
 from matplotlib._pylab_helpers import Gcf
-from matplotlib.cbook import iterable
 from matplotlib.lines import Line2D
 from six import string_types
 
@@ -244,9 +243,9 @@ def add_hlines(ax=None, positions=[0], labels=[], **kwargs):
     # Process the inputs.
     if not ax:
         ax = plt.gca()
-    if not iterable(positions):
+    if not np.iterable(positions):
         positions = (positions,)
-    if not iterable(labels):
+    if not np.iterable(labels):
         labels = (labels,)
 
     # Add and label lines.
@@ -282,9 +281,9 @@ def add_vlines(ax=None, positions=[0], labels=[], **kwargs):
     # Process the inputs.
     if not ax:
         ax = plt.gca()
-    if not iterable(positions):
+    if not np.iterable(positions):
         positions = (positions,)
-    if not iterable(labels):
+    if not np.iterable(labels):
         labels = (labels,)
 
     # Add and label lines.
@@ -1028,15 +1027,15 @@ def plot(y, x=None, ax=None, label=None,
     # Set up the color(s), marker(s), and dash style(s).
     cyc = type(cycle([]))
     if not isinstance(color, cyc):
-        if not iterable(color):
+        if not np.iterable(color):
             color = [color]
         color = cycle(color)
     if not isinstance(marker, cyc):
-        if not iterable(marker):
+        if not np.iterable(marker):
             marker = [marker]
         marker = cycle(marker)
     if not isinstance(dashes, cyc):
-        if not iterable(dashes[0]):
+        if not np.iterable(dashes[0]):
             dashes = [dashes]
         dashes = cycle(dashes)
     # 6/5/11: There is an ax.set_color_cycle() method that could be used, but
@@ -1052,7 +1051,7 @@ def plot(y, x=None, ax=None, label=None,
                          color=next(color), marker=next(marker),
                          dashes=next(dashes), **kwargs)
                  for i, yi in enumerate(y)]
-    elif not iterable(x[0]):
+    elif not np.iterable(x[0]):
         # There is only one x series; use it repeatedly.
         plots = [ax.plot(x, yi, label=None if label is None else label[i],
                          color=next(color), marker=next(marker),

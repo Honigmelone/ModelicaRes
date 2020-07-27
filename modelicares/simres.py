@@ -47,7 +47,6 @@ from difflib import get_close_matches
 from functools import wraps
 from itertools import cycle
 from matplotlib import rcParams
-from matplotlib.cbook import iterable
 from matplotlib.pyplot import figlegend
 from pandas import DataFrame
 from scipy.integrate import trapz as integral
@@ -2145,12 +2144,12 @@ class SimResList(ResList):
         # Set up the color(s) and dash style(s).
         cyc = type(cycle([]))
         if not isinstance(color, cyc):
-            if not iterable(color):
+            if not np.iterable(color):
                 color = [color]
             color = cycle(color)
         kwargs['color'] = color
         if not isinstance(dashes, cyc):
-            if not iterable(dashes[0]):
+            if not np.iterable(dashes[0]):
                 dashes = [dashes]
             dashes = cycle(dashes)
         kwargs['dashes'] = dashes
