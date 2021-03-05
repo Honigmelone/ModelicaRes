@@ -6,8 +6,15 @@ __version__ = "2012-10-11"
 
 import os
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 from modelicares import gen_experiments, SimRes, write_script, saveall
+
+import sys
+import scipy.io
+
+from dymola.dymola_interface import DymolaInterface
+from dymola.dymola_exception import DymolaException
 
 # Settings
 # Begin customize--------------------------------------------------------------
@@ -19,7 +26,16 @@ RUN = True
 FNAME = 'run_sims.mos'
 
 # Working directory
-WORKING_DIR = '~/Documents/Modelica'
+WORKING_DIR = os.path.join((os.getcwd()),'working_dir')
+
+
+
+if not(os.path.exists(WORKING_DIR)):
+    try:
+        os.mkdir(WORKING_DIR)
+    except OSError:
+        print("Creation of the directory %s failed" % WORKING_DIR)
+
 
 # List of Modelica packages that should be preloaded (besides the Modelica
 # Standard Library)
@@ -44,10 +60,40 @@ if RUN:
     MODELS, RESULTS_DIR = write_script(EXPERIMENTS, working_dir=WORKING_DIR,
                                        packages=PACKAGES, fname=FNAME)
 
-    # Ask Dymola to run the script.
-    os.system('dymola ' + FNAME) # For Linux
-    # TODO: Add support for Windows.
-    # os.system(r'C:\Program files\Dymola\bin\Dymola.exe ' + FNAME) # For Windows
+    dymola = None
+
+    def get_last_log(dymola):
+        log = dymola.getLastErrorLog()
+        print(log)
+
+    try:
+        # Instantiate the Dymola interface and start Dymola
+        dymola = DymolaInterface()
+
+
+        # dymola.ExecuteCommand("Advanced.CompileWith64=2")
+        result = dymola.ExecuteCommand('Modelica.Utilities.System.setWorkDirectory("' + Path(WORKING_DIR).as_posix() + '")')
+
+        print('DEBUG1')
+        result = dymola.ExecuteCommand('RunScript("'+Path(os.path.join(os.getcwd(),FNAME)).as_posix()+'", true)')
+
+        print('result code = '+str(result))
+
+        if not result:
+             print("Simulation failed. Below is the translation log.")
+             get_last_log(dymola)
+
+        # dymola.plot(["J1.w", "J2.w", "J3.w", "J4.w"])
+        #dymola.plot(['STABLE_MOTION_G2_PRT.frame_a.f[1]','STABLE_MOTION_G2_PRT.frame_a.f[2]', 'STABLE_MOTION_G2_PRT.frame_a.f[3]'])
+        #dymola.ExportPlotAsImage(os.path.join(dir_result, 'tmp.png'))
+
+    except DymolaException as ex:
+        print("Error: " + str(ex))
+
+    if dymola is not None:
+        dymola.close()
+        dymola = None
+
 else:
     MODELS = [experiment.model[experiment.model.rfind('.')+1:]
               for experiment in EXPERIMENTS]

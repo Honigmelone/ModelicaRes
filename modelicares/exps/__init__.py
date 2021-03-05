@@ -708,7 +708,7 @@ def write_script(experiments=[(None, {}, {})], packages=[],
                                                                   'package.mo'))
                 mos.write('cd("%s");\n' % working_dir)
         mos.write('destination = "%s";\n'
-                  % (os.path.normpath(results_dir) + os.path.sep))
+                  % (os.path.normpath(results_dir)))
         mos.write('\n')
         # Sometimes Dymola opens with an error; simulate any model to clear the
         # error.
@@ -732,7 +732,7 @@ def write_script(experiments=[(None, {}, {})], packages=[],
                 mos.write('ok = %s();\n' % command)
             mos.write('if ok then\n')
             mos.write('    savelog();\n')
-            folder = str(i)
+            folder = os.path.sep+str(i)
             mos.write('    createDirectory(destination + "%s");\n' % folder)
             for result in results:
                 mos.write('    copy("%s", destination + "%s", true);\n' %
